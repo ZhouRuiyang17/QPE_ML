@@ -1,6 +1,6 @@
 '''
 适用于：label+x+y的格式
-2022.7.22
+层状雨
 '''
 
 import numpy as np
