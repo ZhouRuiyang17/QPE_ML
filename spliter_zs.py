@@ -1,27 +1,21 @@
-'''
-适用于：label+x+y的格式
-2022.7.22
-re 2022.8.3
-    适用于多高度
-'''
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-df = pd.read_csv('dataset_zs.csv')
+df = pd.read_excel('data_zs_utc8_ave6.xlsx')
 #%%
-data = df.iloc[:,-7:].values.astype(np.float64)
-
-# 预处理
+data = df.iloc[:,3:].values.astype(np.float64)
+#%%
+# 预处理：区分下雨和不下雨
 loc=np.where(data[:,-1]>0)
 data_rain=data[loc]
 loc=np.where(data[:,-1]==0)
 data_norain=data[loc]
 
 # ----减少不下雨的数量
-ls=np.arange(len(data_rain))
-loc=np.random.choice(ls,int(len(data_rain)/10))
+ls=np.arange(len(data_norain))
+loc=np.random.choice(ls,int(len(data_rain)/10))# 从ls中随机取 int(len(data_rain)/10) 个
 data_norain2=data_norain[loc]
 
 # ----划分降雨等级
@@ -99,29 +93,29 @@ plt.title('test')
 plt.show()
 
 
-# plt.scatter(x_train[:,-1], y_train)
+plt.scatter(x_train[:,0], y_train)
 # plt.ylim(0,100)
 # plt.xlim(-30,70)
-# plt.xlabel('Z (dBZ)')
-# plt.ylabel('R (mm)')
-# plt.title('train')
-# plt.show()
+plt.xlabel('Z (dBZ)')
+plt.ylabel('R (mm)')
+plt.title('train')
+plt.show()
 
-# plt.scatter(x_vali[:,-1], y_vali)
+plt.scatter(x_vali[:,0], y_vali)
 # plt.ylim(0,100)
 # plt.xlim(-30,70)
-# plt.xlabel('Z (dBZ)')
-# plt.ylabel('R (mm)')
-# plt.title('vali')
-# plt.show()
+plt.xlabel('Z (dBZ)')
+plt.ylabel('R (mm)')
+plt.title('vali')
+plt.show()
 
-# plt.scatter(x_test[:,-1], y_test)
+plt.scatter(x_test[:,0], y_test)
 # plt.ylim(0,100)
 # plt.xlim(-30,70)
-# plt.xlabel('Z (dBZ)')
-# plt.ylabel('R (mm)')
-# plt.title('test')
-# plt.show()
+plt.xlabel('Z (dBZ)')
+plt.ylabel('R (mm)')
+plt.title('test')
+plt.show()
 #%%
 # 保存数据
 import os
