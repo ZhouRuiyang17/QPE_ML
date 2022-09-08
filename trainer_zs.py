@@ -301,22 +301,22 @@ zr = 0.0576*(10**(x_test[:,2]/10))**0.557
 # plt.show()
 
 
-x = x_test[:,2]
-y = y_test.reshape(-1)
-xy = np.vstack([x,y])
-z = gaussian_kde(xy)(xy)
-idx = z.argsort()
-x, y, z = x[idx], y[idx], z[idx]
-plt.scatter(x, y, c=z, cmap='Spectral_r', alpha=1)
+# x = x_test[:,2]
+# y = y_test.reshape(-1)
+# xy = np.vstack([x,y])
+# z = gaussian_kde(xy)(xy)
+# idx = z.argsort()
+# x, y, z = x[idx], y[idx], z[idx]
+# plt.scatter(x, y, c=z, cmap='Spectral_r', alpha=1)
 
-plt.scatter(x_test[:,2], zr, label='Z-R', alpha=0.5, marker='^')
-plt.scatter(x_test[:,2], y_pred, label='pred', alpha=0.5)
+# plt.scatter(x_test[:,2], zr, label='Z-R', alpha=0.5, marker='^')
+# plt.scatter(x_test[:,2], y_pred, label='pred', alpha=0.5)
 
-plt.colorbar()
-plt.legend()
-plt.xlabel('Z')
-plt.ylabel('R')
-plt.show()
+# plt.colorbar()
+# plt.legend()
+# plt.xlabel('Z')
+# plt.ylabel('R')
+# plt.show()
 
 plt.scatter(y_test, zr, label='Z-R', marker = '^', alpha = 0.5)
 plt.scatter(y_test, y_pred, label='pred', alpha = 0.5)
