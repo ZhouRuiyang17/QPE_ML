@@ -301,7 +301,7 @@ zr = 0.0576*(10**(x_test[:,0]/10))**0.557
 # plt.show()
 
 
-# x = x_test[:,3]
+# x = x_test[:,0]
 # y = y_test.reshape(-1)
 # xy = np.vstack([x,y])
 # z = gaussian_kde(xy)(xy)
