@@ -324,14 +324,6 @@ plt.ylim(0,100)
 plt.xlim(0,100)
 plt.legend()
 plt.show()
-
-# print('ML:')
-# print('  MAE=', np.mean( abs(y_test-y_pred) ))
-# print('  RMSE=', (np.mean( (y_test-y_pred)**2 ))**0.5 )
-# print('ZR:')
-# print('  MAE=', np.mean( abs(y_test-zr) ))
-# print('  RMSE=', (np.mean( (y_test-zr)**2 ))**0.5 )
-
 #%%
 
 

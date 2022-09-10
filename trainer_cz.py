@@ -1,9 +1,3 @@
-'''
-适用于：（lon，lat，cz） map to （rr）
-2022.7.21
-re 2022.7.22
-    使用sklearn的预处理
-'''
 
 import numpy as np
 import torch
@@ -17,35 +11,35 @@ from scipy import stats
 # *****************************************************[1] 准备数据*****************************************************
 # 读取数据集
 path = 'result/'
-x_train = np.load(path+'x_train.npy')#[:,-1].reshape(-1,1)
-x_vali = np.load(path+'x_vali.npy')#[:,-1].reshape(-1,1)
-x_test = np.load(path+'x_test.npy')#[:,-1].reshape(-1,1)
+x_train = np.load(path+'x_train.npy')[:,0:]#.reshape(-1,1)
+x_vali = np.load(path+'x_vali.npy')[:,0:]#.reshape(-1,1)
+x_test = np.load(path+'x_test.npy')[:,0:]#.reshape(-1,1)
 y_train = np.load(path+'y_train.npy').reshape(-1,1)
 y_vali = np.load(path+'y_vali.npy').reshape(-1,1)
 y_test = np.load(path+'y_test.npy').reshape(-1,1)
+#%%
+# plt.hist(y_test)
+# # plt.yscale('log')
+# plt.title('rain_rate_test')
+# plt.show()
 
-plt.hist(y_test)
-# plt.yscale('log')
-plt.title('rain_rate_test')
-plt.show()
+# plt.hist(x_test[:,-1])
+# # plt.yscale('log')
+# plt.title('cz_test')
+# plt.show()
 
-plt.hist(x_test[:,-1])
-# plt.yscale('log')
-plt.title('cz_test')
-plt.show()
-
-x = x_test[:,-1]
-y = y_test.reshape(-1)
-xy = np.vstack([x,y])
-z = gaussian_kde(xy)(xy)
-idx = z.argsort()
-x, y, z = x[idx], y[idx], z[idx]
-plt.scatter(x, y, c=z, cmap='Spectral_r')
-plt.colorbar()
-plt.xlabel('Z')
-plt.ylabel('R')
-plt.title('test')
-plt.show()
+# x = x_test[:,-1]
+# y = y_test.reshape(-1)
+# xy = np.vstack([x,y])
+# z = gaussian_kde(xy)(xy)
+# idx = z.argsort()
+# x, y, z = x[idx], y[idx], z[idx]
+# plt.scatter(x, y, c=z, cmap='Spectral_r')
+# plt.colorbar()
+# plt.xlabel('Z')
+# plt.ylabel('R')
+# plt.title('test')
+# plt.show()
 
 #%%
 # 映射
@@ -65,30 +59,30 @@ y_train = pp_y.transform(y_train)
 y_vali = pp_y.transform(y_vali)
 y_test = pp_y.transform(y_test)
 
-plt.hist(y_test)
-# plt.yscale('log')
-plt.title('rain_rate_test')
-plt.show()
-# print(kstest(y_test, 'uniform'))
-# print(stats.shapiro(y_test))
+# plt.hist(y_test)
+# # plt.yscale('log')
+# plt.title('rain_rate_test')
+# plt.show()
+# # print(kstest(y_test, 'uniform'))
+# # print(stats.shapiro(y_test))
 
-plt.hist(x_test[:,-1])
-# plt.yscale('log')
-plt.title('cz_test')
-plt.show()
+# plt.hist(x_test[:,-1])
+# # plt.yscale('log')
+# plt.title('cz_test')
+# plt.show()
 
-x = x_test[:,-1]
-y = y_test.reshape(-1)
-xy = np.vstack([x,y])
-z = gaussian_kde(xy)(xy)
-idx = z.argsort()
-x, y, z = x[idx], y[idx], z[idx]
-plt.scatter(x, y, c=z, cmap='Spectral_r')
-plt.colorbar()
-plt.xlabel('Z')
-plt.ylabel('R')
-plt.title('test')
-plt.show()
+# x = x_test[:,-1]
+# y = y_test.reshape(-1)
+# xy = np.vstack([x,y])
+# z = gaussian_kde(xy)(xy)
+# idx = z.argsort()
+# x, y, z = x[idx], y[idx], z[idx]
+# plt.scatter(x, y, c=z, cmap='Spectral_r')
+# plt.colorbar()
+# plt.xlabel('Z')
+# plt.ylabel('R')
+# plt.title('test')
+# plt.show()
 #%%
 # 映射回去
 
@@ -201,7 +195,7 @@ net = Net()
 
 
 # 定义优化器和损失函数
-optimizer = torch.optim.Adam(net.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 loss_func = nn.MSELoss()
 
 # def loss_func(pred, truth):
@@ -294,7 +288,7 @@ y_test = y_test.detach().numpy()
 x_test = pp_x.inverse_transform(x_test)
 y_test = pp_y.inverse_transform(y_test)
 y_pred = pp_y.inverse_transform(y_pred)
-zr = 0.0576*(10**(x_test[:,-1]/10))**0.557
+zr = 0.0576*(10**(x_test[:,0]/10))**0.557
 
 # plt.hist(y_test)
 # # plt.yscale('log')
@@ -307,22 +301,22 @@ zr = 0.0576*(10**(x_test[:,-1]/10))**0.557
 # plt.show()
 
 
-x = x_test[:,-1]
-y = y_test.reshape(-1)
-xy = np.vstack([x,y])
-z = gaussian_kde(xy)(xy)
-idx = z.argsort()
-x, y, z = x[idx], y[idx], z[idx]
-plt.scatter(x, y, c=z, cmap='Spectral_r', alpha=1)
+# x = x_test[:,-1]
+# y = y_test.reshape(-1)
+# xy = np.vstack([x,y])
+# z = gaussian_kde(xy)(xy)
+# idx = z.argsort()
+# x, y, z = x[idx], y[idx], z[idx]
+# plt.scatter(x, y, c=z, cmap='Spectral_r', alpha=1)
 
-plt.scatter(x_test[:,-1], zr, label='Z-R', alpha=0.5, marker='^')
-plt.scatter(x_test[:,-1], y_pred, label='pred', alpha=0.5)
+# plt.scatter(x_test[:,-1], zr, label='Z-R', alpha=0.5, marker='^')
+# plt.scatter(x_test[:,-1], y_pred, label='pred', alpha=0.5)
 
-plt.colorbar()
-plt.legend()
-plt.xlabel('Z')
-plt.ylabel('R')
-plt.show()
+# plt.colorbar()
+# plt.legend()
+# plt.xlabel('Z')
+# plt.ylabel('R')
+# plt.show()
 
 plt.scatter(y_test, zr, label='Z-R', marker = '^', alpha = 0.5)
 plt.scatter(y_test, y_pred, label='pred', alpha = 0.5)
