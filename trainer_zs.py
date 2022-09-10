@@ -11,9 +11,9 @@ from scipy import stats
 # *****************************************************[1] 准备数据*****************************************************
 # 读取数据集
 path = 'result/'
-x_train = np.load(path+'x_train.npy')[:,0:-2]#.reshape(-1,1)
-x_vali = np.load(path+'x_vali.npy')[:,0:-2]#.reshape(-1,1)
-x_test = np.load(path+'x_test.npy')[:,0:-2]#.reshape(-1,1)
+x_train = np.load(path+'x_train.npy')[:,0:]#.reshape(-1,1)
+x_vali = np.load(path+'x_vali.npy')[:,0:]#.reshape(-1,1)
+x_test = np.load(path+'x_test.npy')[:,0:]#.reshape(-1,1)
 y_train = np.load(path+'y_train.npy').reshape(-1,1)
 y_vali = np.load(path+'y_vali.npy').reshape(-1,1)
 y_test = np.load(path+'y_test.npy').reshape(-1,1)
@@ -169,7 +169,7 @@ class Net(nn.Module):
             # # nn.ReLU()
             
             # ver 2
-            nn.Linear(4, 50),
+            nn.Linear(6, 50),
             # nn.Dropout(0.2),
             nn.ReLU(),
             nn.Linear(50, 50),
