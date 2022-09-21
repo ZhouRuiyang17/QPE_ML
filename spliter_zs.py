@@ -1,4 +1,4 @@
-
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -12,14 +12,21 @@ loc = np.where(data[:,0]==54594)[0]
 data2 = data[loc, :]
 data = np.vstack([data1,data2])
 data = data[:,2:]
+#%% 筛选
+pred = 0.0576*(10**(data[:,1]/10))**0.557
+true = data[:,-1]
+loc = np.where((abs(pred-true)/pred)<2)
+data = data[loc]
+
 #%%
 # 预处理：区分下雨和不下雨
 loc=np.where(data[:,-1]>0)
 data_rain=data[loc]
 loc=np.where(data[:,-1]==0)
 data_norain=data[loc]
+# plt.scatter(data_rain[:,1],data_rain[:,-1])
 
-# ----减少不下雨的数量
+# ----减少不下雨的数量'
 ls=np.arange(len(data_norain))
 loc=np.random.choice(ls,int(len(data_rain)/10))# 从ls中随机取 int(len(data_rain)/10) 个
 data_norain2=data_norain[loc]
@@ -82,21 +89,20 @@ y_test=y_test[ls]
 
 #%%
 
-import matplotlib.pyplot as plt
-plt.hist(y_train,bins=np.arange(0,200,10))
-plt.yscale('log')
-plt.title('train')
-plt.show()
+# plt.hist(y_train,bins=np.arange(0,200,10))
+# plt.yscale('log')
+# plt.title('train')
+# plt.show()
 
-plt.hist(y_vali,bins=np.arange(0,200,10))
-plt.yscale('log')
-plt.title('vali')
-plt.show()
+# plt.hist(y_vali,bins=np.arange(0,200,10))
+# plt.yscale('log')
+# plt.title('vali')
+# plt.show()
 
-plt.hist(y_test,bins=np.arange(0,200,10))
-plt.yscale('log')
-plt.title('test')
-plt.show()
+# plt.hist(y_test,bins=np.arange(0,200,10))
+# plt.yscale('log')
+# plt.title('test')
+# plt.show()
 
 
 plt.scatter(x_train[:,1], y_train)

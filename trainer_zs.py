@@ -281,15 +281,15 @@ plt.show()
 # *****************************************************[3] 测试网络*****************************************************
 net = torch.load(path+'net_best.pt')
 net.eval()
-y_pred = net(x_test).detach().numpy()
+y_ml = net(x_test).detach().numpy()
 x_test = x_test.detach().numpy()
 y_test = y_test.detach().numpy()
 
 x_test = pp_x.inverse_transform(x_test)
 y_test = pp_y.inverse_transform(y_test)
-y_pred = pp_y.inverse_transform(y_pred)
-zr_mayu = 0.0576*(10**(x_test[:,1]/10))**0.557
-zr_this = 0.2525731*(10**(x_test[:,1]/10))**0.42911794
+y_ml = pp_y.inverse_transform(y_ml)
+zr_dsd = 0.0576*(10**(x_test[:,1]/10))**0.557
+zr_ob = 0.119467*(10**(x_test[:,1]/10))**0.484429
 
 # plt.hist(y_test)
 # # plt.yscale('log')
@@ -310,22 +310,23 @@ zr_this = 0.2525731*(10**(x_test[:,1]/10))**0.42911794
 # x, y, z = x[idx], y[idx], z[idx]
 # plt.scatter(x, y, c=z, cmap='Spectral_r', alpha=1)
 # plt.scatter(x, zr, label='Z-R', alpha=0.5, marker='^')
-# plt.scatter(x, y_pred, label='pred', alpha=0.5)
+# plt.scatter(x, y_ml, label='pred', alpha=0.5)
 # plt.colorbar()
 # plt.legend()
 # plt.xlabel('Z')
 # plt.ylabel('R')
 # plt.show()
 
-plt.scatter(y_test, zr_mayu, label='Z-R by DSD', marker = '^', alpha = 0.5)
-plt.scatter(y_test, zr_this, label='Z-R by OB', marker = 'x', alpha = 0.5)
-plt.scatter(y_test, y_pred, label='ML', alpha = 0.5)
+plt.scatter(y_test, zr_dsd, label='Z-R by DSD', marker = '^', alpha = 0.5)
+plt.scatter(y_test, zr_ob, label='Z-R by OB', marker = 'x', alpha = 0.5)
+plt.scatter(y_test, y_ml, label='ML', alpha = 0.5)
 plt.plot([0,100],[0,100])
 plt.xlabel('truth')
 plt.ylabel('pred')
 plt.ylim(0,100)
 plt.xlim(0,100)
 plt.legend()
+plt.savefig(path+'eval.png')
 plt.show()
 #%%
 
@@ -336,18 +337,21 @@ for i in range(5):
     loc = np.where((y_test>=limi[i]) & (y_test<limi[i+1]))[0]
     if len(loc) > 0:
         t = y_test[loc]
-        pml = y_pred[loc]
-        pzr_mayu = zr_mayu[loc]
-        pzr_this = zr_this[loc]
+        pml = y_ml[loc]
+        pzr_dsd = zr_dsd[loc]
+        pzr_ob = zr_ob[loc]
         print(limi[i],'~',limi[i+1],':',len(loc),file=fff)
         print('ML:',file=fff)
+        print('  ME=', np.mean( (t-pml) ),file=fff)
         print('  MAE=', np.mean( abs(t-pml) ),file=fff)
         print('  RMSE=', (np.mean( (t-pml)**2 ))**0.5 ,file=fff)
         print('Z-R by DSD:',file=fff)
-        print('  MAE=', np.mean( abs(t-pzr_mayu) ),file=fff)
-        print('  RMSE=', (np.mean( (t-pzr_mayu)**2 ))**0.5 ,file=fff)
+        print('  ME=', np.mean( (t-pzr_dsd) ),file=fff)
+        print('  MAE=', np.mean( abs(t-pzr_dsd) ),file=fff)
+        print('  RMSE=', (np.mean( (t-pzr_dsd)**2 ))**0.5 ,file=fff)
         print('Z-R by OB:',file=fff)
-        print('  MAE=', np.mean( abs(t-pzr_this) ),file=fff)
-        print('  RMSE=', (np.mean( (t-pzr_this)**2 ))**0.5 ,file=fff)
+        print('  ME=', np.mean( (t-pzr_ob) ),file=fff)
+        print('  MAE=', np.mean( abs(t-pzr_ob) ),file=fff)
+        print('  RMSE=', (np.mean( (t-pzr_ob)**2 ))**0.5 ,file=fff)
         print('---',file=fff)
 fff.close()
