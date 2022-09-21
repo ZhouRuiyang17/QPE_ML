@@ -288,7 +288,8 @@ y_test = y_test.detach().numpy()
 x_test = pp_x.inverse_transform(x_test)
 y_test = pp_y.inverse_transform(y_test)
 y_pred = pp_y.inverse_transform(y_pred)
-zr = 0.0576*(10**(x_test[:,0]/10))**0.557
+zr_mayu = 0.0576*(10**(x_test[:,0]/10))**0.557
+zr_this = 0.0964727*(10**(x_test[:,0]/10))**0.488678
 
 # plt.hist(y_test)
 # # plt.yscale('log')
@@ -318,8 +319,10 @@ zr = 0.0576*(10**(x_test[:,0]/10))**0.557
 # plt.ylabel('R')
 # plt.show()
 
-plt.scatter(y_test, zr, label='Z-R', marker = '^', alpha = 0.5)
-plt.scatter(y_test, y_pred, label='pred', alpha = 0.5)
+plt.scatter(y_test, zr_mayu, label='Z-R by DSD', marker = '^', alpha = 0.5)
+plt.scatter(y_test, zr_this, label='Z-R by OB', marker = 'x', alpha = 0.5)
+plt.scatter(y_test, y_pred, label='ML', alpha = 0.5)
+plt.plot([0,100],[0,100])
 plt.xlabel('truth')
 plt.ylabel('pred')
 plt.ylim(0,100)
@@ -334,13 +337,17 @@ for i in range(5):
     if len(loc) > 0:
         t = y_test[loc]
         pml = y_pred[loc]
-        pzr = zr[loc]
+        pzr_mayu = zr_mayu[loc]
+        pzr_this = zr_this[loc]
         print(limi[i],'~',limi[i+1],':',len(loc),file=fff)
         print('ML:',file=fff)
         print('  MAE=', np.mean( abs(t-pml) ),file=fff)
         print('  RMSE=', (np.mean( (t-pml)**2 ))**0.5 ,file=fff)
-        print('ZR:',file=fff)
-        print('  MAE=', np.mean( abs(t-pzr) ),file=fff)
-        print('  RMSE=', (np.mean( (t-pzr)**2 ))**0.5 ,file=fff)
+        print('Z-R by DSD:',file=fff)
+        print('  MAE=', np.mean( abs(t-pzr_mayu) ),file=fff)
+        print('  RMSE=', (np.mean( (t-pzr_mayu)**2 ))**0.5 ,file=fff)
+        print('Z-R by OB:',file=fff)
+        print('  MAE=', np.mean( abs(t-pzr_this) ),file=fff)
+        print('  RMSE=', (np.mean( (t-pzr_this)**2 ))**0.5 ,file=fff)
         print('---',file=fff)
 fff.close()

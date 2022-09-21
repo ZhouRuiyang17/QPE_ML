@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-df = pd.read_excel('data_zs_utc8_ave6.xlsx')
+df = pd.read_excel('data_cz_utc8_ave6.xlsx')
 #%%
 data = df.iloc[:,1:].values.astype(np.float64)
 loc = np.where(data[:,0]==54511)[0]
