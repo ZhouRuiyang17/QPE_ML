@@ -28,18 +28,18 @@ y_test = np.load(path+'y_test.npy').reshape(-1,1)
 # plt.title('z_test')
 # plt.show()
 
-# x = x_test[:,0]
-# y = y_test.reshape(-1)
-# xy = np.vstack([x,y])
-# z = gaussian_kde(xy)(xy)
-# idx = z.argsort()
-# x, y, z = x[idx], y[idx], z[idx]
-# plt.scatter(x, y, c=z, cmap='Spectral_r')
-# plt.colorbar()
-# plt.xlabel('Z')
-# plt.ylabel('R')
-# plt.title('test')
-# plt.show()
+x = x_train[:,1]
+y = y_train.reshape(-1)
+xy = np.vstack([x,y])
+z = gaussian_kde(xy)(xy)
+idx = z.argsort()
+x, y, z = x[idx], y[idx], z[idx]
+plt.scatter(x, y, c=z, cmap='Spectral_r')
+plt.colorbar()
+plt.xlabel('Z')
+plt.ylabel('R')
+plt.title('train')
+plt.show()
 
 #%%
 # 映射
@@ -331,9 +331,12 @@ plt.show()
 #%%
 
 
-limi = [0, 0.1, 10, 25, 50, 100]
+# limi = [0, 0.1, 10, 25, 50, 100]
+limi = [0, 0.1, 5, 30, 200]
+
 fff = open(path+'eval.txt','w')
-for i in range(5):
+# for i in range(5):
+for i in range(4):
     loc = np.where((y_test>=limi[i]) & (y_test<limi[i+1]))[0]
     if len(loc) > 0:
         t = y_test[loc]
