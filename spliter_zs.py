@@ -3,24 +3,25 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-df = pd.read_excel('data_zs_utc8_ave6.xlsx')
+df = pd.read_excel('data_zs_221030_utc8.xlsx')
 #%%
 data = df.iloc[:,1:].values.astype(np.float64)
-loc = np.where(data[:,0]==54511)[0]
-data1 = data[loc, :]
-loc = np.where(data[:,0]==54594)[0]
-data2 = data[loc, :]
-data = np.vstack([data1,data2])
-data = data[:,2:]
+# loc = np.where(data[:,0]==54511)[0]
+# data1 = data[loc, :]
+# loc = np.where(data[:,0]==54594)[0]
+# data2 = data[loc, :]
+# data = np.vstack([data1,data2])
+# data = data[:,2:]
 #%% 筛选
-pred = 0.0576*(10**(data[:,1]/10))**0.557
+pred = 0.0576*(10**(data[:,3]/10))**0.557
 true = data[:,-1]
 loc = np.where((abs(pred-true)/pred)<2)
 data = data[loc]
+# data[:,2:-3]
 
 #%%
 # 预处理：区分下雨和不下雨
-loc=np.where(data[:,-1]>0)
+loc=np.where((data[:,-1]>0))
 data_rain=data[loc]
 loc=np.where(data[:,-1]==0)
 data_norain=data[loc]
@@ -105,29 +106,29 @@ y_test=y_test[ls]
 # plt.show()
 
 
-plt.scatter(x_train[:,1], y_train)
-# plt.ylim(0,100)
-# plt.xlim(-30,70)
-plt.xlabel('Z (dBZ)')
-plt.ylabel('R (mm)')
-plt.title('train')
-plt.show()
+# plt.scatter(x_train[:,1], y_train)
+# # plt.ylim(0,100)
+# # plt.xlim(-30,70)
+# plt.xlabel('Z (dBZ)')
+# plt.ylabel('R (mm)')
+# plt.title('train')
+# plt.show()
 
-plt.scatter(x_vali[:,1], y_vali)
-# plt.ylim(0,100)
-# plt.xlim(-30,70)
-plt.xlabel('Z (dBZ)')
-plt.ylabel('R (mm)')
-plt.title('vali')
-plt.show()
+# plt.scatter(x_vali[:,1], y_vali)
+# # plt.ylim(0,100)
+# # plt.xlim(-30,70)
+# plt.xlabel('Z (dBZ)')
+# plt.ylabel('R (mm)')
+# plt.title('vali')
+# plt.show()
 
-plt.scatter(x_test[:,1], y_test)
-# plt.ylim(0,100)
-# plt.xlim(-30,70)
-plt.xlabel('Z (dBZ)')
-plt.ylabel('R (mm)')
-plt.title('test')
-plt.show()
+# plt.scatter(x_test[:,1], y_test)
+# # plt.ylim(0,100)
+# # plt.xlim(-30,70)
+# plt.xlabel('Z (dBZ)')
+# plt.ylabel('R (mm)')
+# plt.title('test')
+# plt.show()
 #%%
 # 保存数据
 import os

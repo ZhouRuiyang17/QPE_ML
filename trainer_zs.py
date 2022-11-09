@@ -11,9 +11,13 @@ from scipy import stats
 # *****************************************************[1] 准备数据*****************************************************
 # 读取数据集
 path = 'result/'
-x_train = np.load(path+'x_train.npy')[:,0:]#.reshape(-1,1)
-x_vali = np.load(path+'x_vali.npy')[:,0:]#.reshape(-1,1)
-x_test = np.load(path+'x_test.npy')[:,0:]#.reshape(-1,1)
+# loc = [2, 3, 4, 5, 22, 23]
+# x_train = np.load(path+'x_train.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
+# x_vali = np.load(path+'x_vali.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
+# x_test = np.load(path+'x_test.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
+x_train = np.load(path+'x_train.npy')[:,2:]#.reshape(-1,1)
+x_vali = np.load(path+'x_vali.npy')[:,2:]#.reshape(-1,1)
+x_test = np.load(path+'x_test.npy')[:,2:]#.reshape(-1,1)
 y_train = np.load(path+'y_train.npy').reshape(-1,1)
 y_vali = np.load(path+'y_vali.npy').reshape(-1,1)
 y_test = np.load(path+'y_test.npy').reshape(-1,1)
@@ -169,7 +173,8 @@ class Net(nn.Module):
             # # nn.ReLU()
             
             # ver 2
-            nn.Linear(6, 50),
+            # nn.Linear(4+2, 50),
+            nn.Linear(20+2, 50),
             # nn.Dropout(0.2),
             nn.ReLU(),
             nn.Linear(50, 50),
@@ -289,7 +294,7 @@ x_test = pp_x.inverse_transform(x_test)
 y_test = pp_y.inverse_transform(y_test)
 y_ml = pp_y.inverse_transform(y_ml)
 zr_dsd = 0.0576*(10**(x_test[:,1]/10))**0.557
-zr_ob = 0.119467*(10**(x_test[:,1]/10))**0.484429
+zr_ob = 0.11949418*(10**(x_test[:,1]/10))**0.48441046
 
 # plt.hist(y_test)
 # # plt.yscale('log')
@@ -317,17 +322,62 @@ zr_ob = 0.119467*(10**(x_test[:,1]/10))**0.484429
 # plt.ylabel('R')
 # plt.show()
 
+
+plt.figure(figsize=(5,5))
 plt.scatter(y_test, zr_dsd, label='Z-R by DSD', marker = '^', alpha = 0.5)
 plt.scatter(y_test, zr_ob, label='Z-R by OB', marker = 'x', alpha = 0.5)
 plt.scatter(y_test, y_ml, label='ML', alpha = 0.5)
-plt.plot([0,100],[0,100])
+plt.plot([0,75],[0,75])
 plt.xlabel('truth')
 plt.ylabel('pred')
-plt.ylim(0,100)
-plt.xlim(0,100)
+plt.ylim(0,75)
+plt.xlim(0,75)
 plt.legend()
 plt.savefig(path+'eval.png')
 plt.show()
+
+plt.figure(figsize=(5,5))
+# plt.scatter(y_test, zr_dsd, label='Z-R by DSD', marker = '^', alpha = 0.5)
+# plt.scatter(y_test, zr_ob, label='Z-R by OB', marker = 'x', alpha = 0.5)
+plt.scatter(y_test, y_ml, label='ML', alpha = 0.5)
+plt.plot([0,75],[0,75])
+plt.xlabel('truth')
+plt.ylabel('pred')
+plt.ylim(0,75)
+plt.xlim(0,75)
+plt.legend()
+plt.savefig(path+'ml.png')
+plt.show()
+
+plt.figure(figsize=(5,5))
+plt.scatter(y_test, zr_dsd, label='Z-R by DSD', marker = '^', alpha = 0.5)
+# plt.scatter(y_test, zr_ob, label='Z-R by OB', marker = 'x', alpha = 0.5)
+# plt.scatter(y_test, y_ml, label='ML', alpha = 0.5)
+plt.plot([0,75],[0,75])
+plt.xlabel('truth')
+plt.ylabel('pred')
+plt.ylim(0,75)
+plt.xlim(0,75)
+plt.legend()
+plt.savefig(path+'dsd.png')
+plt.show()
+
+
+plt.figure(figsize=(5,5))
+# plt.scatter(y_test, zr_dsd, label='Z-R by DSD', marker = '^', alpha = 0.5)
+plt.scatter(y_test, zr_ob, label='Z-R by OB', marker = 'x', alpha = 0.5)
+# plt.scatter(y_test, y_ml, label='ML', alpha = 0.5)
+plt.plot([0,75],[0,75])
+plt.xlabel('truth')
+plt.ylabel('pred')
+plt.ylim(0,75)
+plt.xlim(0,75)
+plt.legend()
+plt.savefig(path+'ob.png')
+plt.show()
+
+
+
 #%%
 
 
@@ -358,3 +408,4 @@ for i in range(4):
         print('  RMSE=', (np.mean( (t-pzr_ob)**2 ))**0.5 ,file=fff)
         print('---',file=fff)
 fff.close()
+
