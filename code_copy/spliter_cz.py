@@ -2,23 +2,15 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-from scipy.stats import gaussian_kde
-
-
+# from sklearn.preprocessing import StandardScaler, MinMaxScaler
 df = pd.read_excel('data_cz_utc8_ave6.xlsx', index_col = 0)
 #%% 留一场雨 20190728-20190730
 data = df.values
 loc = np.where(data[:,1]<201907280000)
 data = data[loc]
 
-#%% 筛选一下
-b = 1/1.4; a = (1/300)**b
-pred = a*(10**(data[:,2]/10))**b
-true = data[:,3]
-loc = np.where( abs(pred-true) <= pred )
-data = data[loc]
-
-#%% 分雨
+#%%
+# 预处理
 # >0 实际降雨；=0 实际无雨；<0 不匹配
 loc=np.where(data[:,-1]>0)
 data_rain=data[loc]
@@ -104,14 +96,7 @@ plt.title('test')
 plt.show()
 
 
-
-x, y = x_train[:,-1], y_train
-xy = np.vstack([x,y])
-z = gaussian_kde(xy)(xy)
-idx = z.argsort()
-x, y, z = x[idx], y[idx], z[idx]
-plt.scatter(x, y, c=z, cmap='Spectral_r')
-# plt.scatter(x_train[:,-1], y_train)
+plt.scatter(x_train[:,-1], y_train)
 plt.ylim(0,100)
 plt.xlim(-30,70)
 plt.xlabel('Z (dBZ)')
@@ -119,13 +104,7 @@ plt.ylabel('R (mm)')
 plt.title('train')
 plt.show()
 
-x, y = x_vali[:,-1], y_vali
-xy = np.vstack([x,y])
-z = gaussian_kde(xy)(xy)
-idx = z.argsort()
-x, y, z = x[idx], y[idx], z[idx]
-plt.scatter(x, y, c=z, cmap='Spectral_r')
-# plt.scatter(x_vali[:,-1], y_vali)
+plt.scatter(x_vali[:,-1], y_vali)
 plt.ylim(0,100)
 plt.xlim(-30,70)
 plt.xlabel('Z (dBZ)')
@@ -133,13 +112,7 @@ plt.ylabel('R (mm)')
 plt.title('vali')
 plt.show()
 
-x, y = x_test[:,-1], y_test
-xy = np.vstack([x,y])
-z = gaussian_kde(xy)(xy)
-idx = z.argsort()
-x, y, z = x[idx], y[idx], z[idx]
-plt.scatter(x, y, c=z, cmap='Spectral_r')
-# plt.scatter(x_test[:,-1], y_test)
+plt.scatter(x_test[:,-1], y_test)
 plt.ylim(0,100)
 plt.xlim(-30,70)
 plt.xlabel('Z (dBZ)')
