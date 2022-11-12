@@ -1,19 +1,17 @@
-
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-df = pd.read_excel('data_cz_utc8_ave6.xlsx')
-#%%
-data = df.iloc[:,1:].values.astype(np.float64)
-loc = np.where(data[:,0]==54511)[0]
-data1 = data[loc, :]
-loc = np.where(data[:,0]==54594)[0]
-data2 = data[loc, :]
-data = np.vstack([data1,data2])
-data = data[:,2:]
+import matplotlib.pyplot as plt
+# from sklearn.preprocessing import StandardScaler, MinMaxScaler
+df = pd.read_excel('data_cz_utc8_ave6.xlsx', index_col = 0)
+#%% 留一场雨 20190728-20190730
+data = df.values
+loc = np.where(data[:,1]<201907280000)
+data = data[loc]
+
 #%%
 # 预处理
+# >0 实际降雨；=0 实际无雨；<0 不匹配
 loc=np.where(data[:,-1]>0)
 data_rain=data[loc]
 loc=np.where(data[:,-1]==0)
@@ -36,24 +34,24 @@ def spliter(x,y,test_size):
     return  x_train, x_test, y_train, y_test
 
 # ----不下雨
-x,x0_test,y,y0_test=spliter(data_norain2[:,:-1],data_norain2[:,-1],0.1)
-x0_train,x0_vali,y0_train,y0_vali=spliter(x,y,1/9)
+x,x0_test,y,y0_test=spliter(data_norain2[:,:-1],data_norain2[:,-1],0.3)
+x0_train,x0_vali,y0_train,y0_vali=spliter(x,y,1/7)
 
 # ----小雨
-x,x1_test,y,y1_test=spliter(data_rain_1[:,:-1],data_rain_1[:,-1],0.1)
-x1_train,x1_vali,y1_train,y1_vali=spliter(x,y,1/9)
+x,x1_test,y,y1_test=spliter(data_rain_1[:,:-1],data_rain_1[:,-1],0.3)
+x1_train,x1_vali,y1_train,y1_vali=spliter(x,y,1/7)
 
 # ----中雨
-x,x2_test,y,y2_test=spliter(data_rain_2[:,:-1],data_rain_2[:,-1],0.1)
-x2_train,x2_vali,y2_train,y2_vali=spliter(x,y,1/9)
+x,x2_test,y,y2_test=spliter(data_rain_2[:,:-1],data_rain_2[:,-1],0.3)
+x2_train,x2_vali,y2_train,y2_vali=spliter(x,y,1/7)
 
 # ----大雨
-x,x3_test,y,y3_test=spliter(data_rain_3[:,:-1],data_rain_3[:,-1],0.1)
-x3_train,x3_vali,y3_train,y3_vali=spliter(x,y,1/9)
+x,x3_test,y,y3_test=spliter(data_rain_3[:,:-1],data_rain_3[:,-1],0.3)
+x3_train,x3_vali,y3_train,y3_vali=spliter(x,y,1/7)
 
 # ----暴雨
-x,x4_test,y,y4_test=spliter(data_rain_4[:,:-1],data_rain_4[:,-1],0.1)
-x4_train,x4_vali,y4_train,y4_vali=spliter(x,y,1/9)
+x,x4_test,y,y4_test=spliter(data_rain_4[:,:-1],data_rain_4[:,-1],0.3)
+x4_train,x4_vali,y4_train,y4_vali=spliter(x,y,1/7)
 
 # ---合并
 x_train=np.vstack((x0_train,x1_train,x2_train,x3_train,x4_train))
@@ -82,7 +80,6 @@ y_test=y_test[ls]
 
 #%%
 
-import matplotlib.pyplot as plt
 plt.hist(y_train,bins=np.arange(0,200,10))
 plt.yscale('log')
 plt.title('train')
