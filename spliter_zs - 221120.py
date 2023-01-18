@@ -6,18 +6,25 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 df = pd.read_excel('data_zs_221030_utc8.xlsx')
 
 data = df.iloc[:,1:].values.astype(np.float64)
-
+# loc = np.where(data[:,0]==54511)[0]
+# data1 = data[loc, :]
+# loc = np.where(data[:,0]==54594)[0]
+# data2 = data[loc, :]
+# data = np.vstack([data1,data2])
+# data = data[:,2:]
 #%% 筛选
 pred = 0.0576*(10**(data[:,3]/10))**0.557
 true = data[:,-1]
 loc = np.where((abs(pred-true)/pred)<2)
 data = data[loc]
+# data[:,2:-3]
 
 #%% 预处理：区分下雨和不下雨
 loc=np.where((data[:,-1]>0))
 data_rain=data[loc]
 loc=np.where(data[:,-1]==0)
 data_norain=data[loc]
+# plt.scatter(data_rain[:,1],data_rain[:,-1])
 
 # ----减少不下雨的数量'
 ls=np.arange(len(data_norain))
@@ -35,24 +42,24 @@ def spliter(x,y,test_size):
     return  x_train, x_test, y_train, y_test
 
 # ----不下雨
-x,x0_test,y,y0_test=spliter(data_norain2[:,:-1],data_norain2[:,-1],0.3)
-x0_train,x0_vali,y0_train,y0_vali=spliter(x,y,1/7)
+x,x0_test,y,y0_test=spliter(data_norain2[:,:-1],data_norain2[:,-1],0.1)
+x0_train,x0_vali,y0_train,y0_vali=spliter(x,y,1/9)
 
 # ----小雨
-x,x1_test,y,y1_test=spliter(data_rain_1[:,:-1],data_rain_1[:,-1],0.3)
-x1_train,x1_vali,y1_train,y1_vali=spliter(x,y,1/7)
+x,x1_test,y,y1_test=spliter(data_rain_1[:,:-1],data_rain_1[:,-1],0.1)
+x1_train,x1_vali,y1_train,y1_vali=spliter(x,y,1/9)
 
 # ----中雨
-x,x2_test,y,y2_test=spliter(data_rain_2[:,:-1],data_rain_2[:,-1],0.3)
-x2_train,x2_vali,y2_train,y2_vali=spliter(x,y,1/7)
+x,x2_test,y,y2_test=spliter(data_rain_2[:,:-1],data_rain_2[:,-1],0.1)
+x2_train,x2_vali,y2_train,y2_vali=spliter(x,y,1/9)
 
 # ----大雨
-x,x3_test,y,y3_test=spliter(data_rain_3[:,:-1],data_rain_3[:,-1],0.3)
-x3_train,x3_vali,y3_train,y3_vali=spliter(x,y,1/7)
+x,x3_test,y,y3_test=spliter(data_rain_3[:,:-1],data_rain_3[:,-1],0.1)
+x3_train,x3_vali,y3_train,y3_vali=spliter(x,y,1/9)
 
 # ----暴雨
-x,x4_test,y,y4_test=spliter(data_rain_4[:,:-1],data_rain_4[:,-1],0.3)
-x4_train,x4_vali,y4_train,y4_vali=spliter(x,y,1/7)
+x,x4_test,y,y4_test=spliter(data_rain_4[:,:-1],data_rain_4[:,-1],0.1)
+x4_train,x4_vali,y4_train,y4_vali=spliter(x,y,1/9)
 
 # ---合并
 x_train=np.vstack((x0_train,x1_train,x2_train,x3_train,x4_train))

@@ -10,9 +10,14 @@ from scipy import stats
 # *****************************************************[1] 准备数据*****************************************************
 # ----读取数据集
 path = 'result/'
-x_train = np.load(path+'x_train.npy')[:,:]#.reshape(-1,1)
-x_vali = np.load(path+'x_vali.npy')[:,:]#.reshape(-1,1)
-x_test = np.load(path+'x_test.npy')[:,:]#.reshape(-1,1)
+x_train = np.load(path+'x_train.npy')
+x_vali = np.load(path+'x_vali.npy')
+x_test = np.load(path+'x_test.npy')
+
+x_train = x_train[:,[2,3,4,5,-2,-1]]
+x_vali = x_vali[:,[2,3,4,5,-2,-1]]
+x_test = x_test[:,[2,3,4,5,-2,-1]]
+
 y_train = np.load(path+'y_train.npy').reshape(-1,1)
 y_vali = np.load(path+'y_vali.npy').reshape(-1,1)
 y_test = np.load(path+'y_test.npy').reshape(-1,1)

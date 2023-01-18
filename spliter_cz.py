@@ -8,8 +8,8 @@ from scipy.stats import gaussian_kde
 df = pd.read_excel('data_cz_utc8_ave6.xlsx', index_col = 0)
 #%% 留一场雨 20190728-20190730
 data = df.values
-loc = np.where(data[:,1]<201907280000)
-data = data[loc]
+# loc = np.where(data[:,1]<201907280000)
+# data = data[loc]
 
 #%% 筛选一下
 b = 1/1.4; a = (1/300)**b

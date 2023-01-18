@@ -12,12 +12,12 @@ from scipy import stats
 # 读取数据集
 path = 'result/'
 # loc = [2, 3, 4, 5, 22, 23]
-# x_train = np.load(path+'x_train.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
-# x_vali = np.load(path+'x_vali.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
-# x_test = np.load(path+'x_test.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
-x_train = np.load(path+'x_train.npy')[:,2:]#.reshape(-1,1)
-x_vali = np.load(path+'x_vali.npy')[:,2:]#.reshape(-1,1)
-x_test = np.load(path+'x_test.npy')[:,2:]#.reshape(-1,1)
+x_train = np.load(path+'x_train.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
+x_vali = np.load(path+'x_vali.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
+x_test = np.load(path+'x_test.npy')[:,[2,3,4,5,22,23]]#.reshape(-1,1)
+# x_train = np.load(path+'x_train.npy')[:,2:]#.reshape(-1,1)
+# x_vali = np.load(path+'x_vali.npy')[:,2:]#.reshape(-1,1)
+# x_test = np.load(path+'x_test.npy')[:,2:]#.reshape(-1,1)
 y_train = np.load(path+'y_train.npy').reshape(-1,1)
 y_vali = np.load(path+'y_vali.npy').reshape(-1,1)
 y_test = np.load(path+'y_test.npy').reshape(-1,1)
@@ -174,10 +174,10 @@ class Net(nn.Module):
             
             # ver 2
             # nn.Linear(4+2, 50),
-            nn.Linear(20+2, 50),
+            nn.Linear(4+2, 128),
             # nn.Dropout(0.2),
             nn.ReLU(),
-            nn.Linear(50, 50),
+            nn.Linear(128, 64),
             # nn.Dropout(0.2),
             nn.ReLU(),
             # nn.Linear(50, 50),
@@ -186,7 +186,7 @@ class Net(nn.Module):
             # nn.Linear(50, 50),
             # # nn.Dropout(0.2),
             # nn.ReLU(),
-            nn.Linear(50, 1),
+            nn.Linear(64, 1),
             nn.Sigmoid()
             # nn.ReLU(),
 
