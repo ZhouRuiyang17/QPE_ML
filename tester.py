@@ -10,14 +10,14 @@ from scipy import stats
 from scipy.optimize import curve_fit
 # *****************************************************[1] 准备数据*****************************************************
 # 读取数据集
-path = 'result/'
+path = 'history/230212 zs/'
 x_train = np.load(path+'x_train.npy')
 x_vali = np.load(path+'x_vali.npy')
 x_test = np.load(path+'x_test.npy')
 
-x_train = x_train[:,[2,3,4,5,-2,-1]]
-x_vali = x_vali[:,[2,3,4,5,-2,-1]]
-x_test = x_test[:,[2,3,4,5,-2,-1]]
+x_train = x_train[:,[2,3,4,5]]
+x_vali = x_vali[:,[2,3,4,5]]
+x_test = x_test[:,[2,3,4,5]]
 
 
 y_train = np.load(path+'y_train.npy').reshape(-1,1)
@@ -52,7 +52,7 @@ class Net(nn.Module):
 
         self.fc = nn.Sequential(
              
-            nn.Linear(1, 128),
+            nn.Linear(4, 128),
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),
@@ -72,6 +72,7 @@ class Net(nn.Module):
 
 net = torch.load(path+'net_best.pt')
 net.eval()
+
 y_pred = net(x_test).detach().numpy()
 y_pred = pp_y.inverse_transform(y_pred)
 
@@ -136,6 +137,7 @@ def plot(t, p, label=None, stat=None,num=None):
     ax.set_ylim(0,100)
     ax.set_xlim(0,100)
     plt.legend(loc='upper right')
+    plt.grid()
     
     ax.text(1,95,num)
 
@@ -157,20 +159,47 @@ plot(y_test, zr_200, label='$Z=200R^{1.6}$',num='(d)',stat=stat)
 
 
 
-# limi = [0, 0.1, 10, 25, 50, 200]
-# for i in range(5):
-#     loc = np.where((y_test>=limi[i]) & (y_test<limi[i+1]))[0]
-#     # print(len(loc))
+limi = [0, 0.1, 10, 25, 50, np.max(y_test)+100]
+for i in range(5):
+    loc = np.where((y_test>=limi[i]) & (y_test<limi[i+1]))[0]
+    # print(len(loc))
     
-#     df = pd.DataFrame(np.zeros(shape=(5,5)))
-#     df.iloc[:, 0] = str(len(loc)), 'ME', 'MAE', 'RMSE', 'CC'
-#     df.iloc[0,1:] = 'QPE_FC', 'Z=238R^1.57', 'Z=300R^1.4', 'Z=200R^1.6' 
+    df = pd.DataFrame(np.zeros(shape=(5,5)))
+    df.iloc[:, 0] = str(len(loc)), 'ME', 'MAE', 'RMSE', 'CC'
+    df.iloc[0,1:] = 'QPE_FC', 'Z=238R^1.57', 'Z=300R^1.4', 'Z=200R^1.6' 
     
 
-#     df.iloc[1:, 1] = evaluation(y_test[loc], y_pred[loc])
-#     df.iloc[1:, 2] = evaluation(y_test[loc], zr_mayu[loc])
-#     df.iloc[1:, 3] = evaluation(y_test[loc], zr_300[loc])
-#     df.iloc[1:, 4] = evaluation(y_test[loc], zr_200[loc])
-#     df.to_csv(path+str(limi[i])+'-'+str(limi[i+1])+'.csv')
+    df.iloc[1:, 1] = evaluation(y_test[loc], y_pred[loc])
+    df.iloc[1:, 2] = evaluation(y_test[loc], zr_mayu[loc])
+    df.iloc[1:, 3] = evaluation(y_test[loc], zr_300[loc])
+    df.iloc[1:, 4] = evaluation(y_test[loc], zr_200[loc])
+    df.to_csv(path+str(limi[i])+'-'+str(limi[i+1])+'.csv')
 
 
+# plt.scatter(z, y_test, label='$obs$')
+# plt.scatter(z, y_pred, label='$QPE_{FC}$')
+# plt.xlim(0,100)
+# plt.ylim(0,100)
+# plt.legend()
+# plt.show()
+
+# plt.scatter(z, y_test, label='$obs$')
+# plt.scatter(z, zr_mayu, label='$Z=238R^{1.57}$')
+# plt.xlim(0,100)
+# plt.ylim(0,100)
+# plt.legend()
+# plt.show()
+
+# plt.scatter(z, y_test, label='$obs$')
+# plt.scatter(z, zr_300, label='$Z=300R^{1.4}$')
+# plt.xlim(0,100)
+# plt.ylim(0,100)
+# plt.legend()
+# plt.show()
+
+# plt.scatter(z, y_test, label='$obs$')
+# plt.scatter(z, zr_200, label='$Z=200R^{1.6}$')
+# plt.xlim(0,100)
+# plt.ylim(0,100)
+# plt.legend()
+# plt.show()

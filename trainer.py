@@ -14,9 +14,9 @@ x_train = np.load(path+'x_train.npy')
 x_vali = np.load(path+'x_vali.npy')
 x_test = np.load(path+'x_test.npy')
 
-x_train = x_train[:,[2,3,4,5,-2,-1]]
-x_vali = x_vali[:,[2,3,4,5,-2,-1]]
-x_test = x_test[:,[2,3,4,5,-2,-1]]
+x_train = x_train[:,[2,3,4,5]]
+x_vali = x_vali[:,[2,3,4,5]]
+x_test = x_test[:,[2,3,4,5]]
 
 y_train = np.load(path+'y_train.npy').reshape(-1,1)
 y_vali = np.load(path+'y_vali.npy').reshape(-1,1)
@@ -70,7 +70,7 @@ class Net(nn.Module):
         self.fc = nn.Sequential(
             
             # 6: 4*z + lon + lat
-            nn.Linear(6, 128),
+            nn.Linear(4, 128),
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),
@@ -94,10 +94,30 @@ net = Net()
 optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 loss_func = nn.MSELoss()
 
+# def biased_mse_loss(pred, truth):
+#     weight = (truth < 0.1) * 1 \
+#         + (torch.logical_and(truth >= 0.1, truth < 10)) * 4 \
+#         + (torch.logical_and(truth >= 10, truth < 25)) * 16 \
+#         + (torch.logical_and(truth >= 25, truth < 50)) * 64 \
+#         + (truth >= 50) * 256
+#     return torch.mean(weight * (pred - truth) ** 2)
 
+# def minmax_norm(tensor: torch.Tensor, vmax: float, vmin: float) -> torch.Tensor:
+#     tensor = torch.clip(tensor, vmin, vmax)
+#     tensor = ((tensor - vmin) / (vmax - vmin))
+#     return tensor
+# def biased_mse_loss(pred: torch.Tensor, truth: torch.Tensor, vmax: float, vmin: float) -> torch.Tensor:
+#     points = minmax_norm(torch.tensor([0.1, 10.0, 25.0, 50.0]), vmax, vmin)
+
+#     weight = (truth < points[0]) * 1 \
+#         + (torch.logical_and(truth >= points[0], truth < points[1])) * 4 \
+#         + (torch.logical_and(truth >= points[1], truth < points[2])) * 8 \
+#         + (torch.logical_and(truth >= points[2], truth < points[3])) * 16 \
+#         + (truth >= points[3]) * 32
+#     return torch.mean(weight * (pred - truth) ** 2)
 
 # 训练
-epoch_nums = 2**5
+epoch_nums = 2**6
 train_loss_list, vali_loss_list = [], []
 with open(path+'loss.txt', 'w') as f:
     for epoch in range(epoch_nums):
@@ -111,6 +131,7 @@ with open(path+'loss.txt', 'w') as f:
             if b != 16:
                 break
             y_p = net(x)
+            # train_loss = biased_mse_loss(y_p, y_t, 0, 200)
             train_loss = loss_func(y_p, y_t)
 
             optimizer.zero_grad()
@@ -132,6 +153,7 @@ with open(path+'loss.txt', 'w') as f:
             if b != 16:
                 break
             y_p = net(x)
+            # vali_loss = biased_mse_loss(y_p, y_t, 0, 200)
             vali_loss = loss_func(y_p, y_t)
 
             vali_loss_all += vali_loss.item()
