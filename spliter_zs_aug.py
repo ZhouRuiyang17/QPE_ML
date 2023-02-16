@@ -5,11 +5,23 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from tools import plot
+from tools import scatter_density
 
-df = pd.read_excel('data_zs_221030_utc8.xlsx')
+# df = pd.read_excel('data_zs_221030_utc8.xlsx')
 
-data = df.iloc[:,1:].values.astype(np.float64)
+# data = df.iloc[:,1:].values.astype(np.float64)
+# np.save('data_zs_221030_utc8.npy', data)
+# loc = np.where((data[:,1] > 201907280000) & (data[:,1] < 201908010000))
+# d = data[loc]
+# np.save('data_zs_190728_190731.npy', d)
+# data = data[:314720] # 2023.2.16 缩短TVT集，留一场用于实践
+# np.save('data_zs_221030_utc8_clip.npy', data)
+
+
+data = np.load('data_zs_221030_utc8_clip.npy')
+
+
+
 
 #%% 筛选
 pred = 0.0576*(10**(data[:,3]/10))**0.557
@@ -78,7 +90,7 @@ plt.yscale('log')
 plt.title('train')
 plt.show()
 
-plot(x_train[:,3], y_train)
+scatter_density(x_train[:,3], y_train)
 
 # plt.hist(y_vali,bins=np.arange(0,200,10))
 # plt.yscale('log')
@@ -92,7 +104,7 @@ plot(x_train[:,3], y_train)
 
 # ----简单增强
 loc_heavy = np.where((y_train>=25) & (y_train<50))
-for i in range(20):
+for i in range(40):
     copy_y = y_train[loc_heavy]
     copy_x = x_train[loc_heavy]
     
@@ -128,7 +140,7 @@ plt.yscale('log')
 plt.title('train')
 plt.show()
 
-plot(x_train[:,3], y_train)
+scatter_density(x_train[:,3], y_train)
 
 
 # plt.scatter(x_vali[:,1], y_vali)

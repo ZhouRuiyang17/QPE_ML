@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import gaussian_kde
 import numpy as np
 
-def plot(x, y, label=None, stat=None,num=None , 
+def scatter_density(x, y, label=None, stat=None,num=None , 
          xminmax=None, yminmax=None,xlabel=None, ylabel=None, line=0):
     # set rcparams
     plt.rcParams['figure.figsize']=(10,8)

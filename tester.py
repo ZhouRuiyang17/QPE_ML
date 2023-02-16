@@ -10,7 +10,7 @@ from scipy import stats
 from scipy.optimize import curve_fit
 # *****************************************************[1] 准备数据*****************************************************
 # 读取数据集
-path = 'history/230212 zs/'
+path = 'result/'
 x_train = np.load(path+'x_train.npy')
 x_vali = np.load(path+'x_vali.npy')
 x_test = np.load(path+'x_test.npy')
