@@ -75,14 +75,16 @@ net.eval()
 
 y_pred = net(x_test).detach().numpy()
 y_pred = pp_y.inverse_transform(y_pred)
+y_pred = y_pred.flatten()
 
 x_test = x_test.detach().numpy()
 x_test = pp_x.inverse_transform(x_test)
 
 y_test = y_test.detach().numpy()
 y_test = pp_y.inverse_transform(y_test)
+y_test = y_test.flatten()
 
-z = x_test[:,2]
+z = x_test[:,1]
 zr_mayu = 0.0576*(10**(z/10))**0.557
 b = 1/1.4; a = (1/300)**b
 zr_300  = a     *(10**(z/10))**b
@@ -92,8 +94,9 @@ zr_200  = a     *(10**(z/10))**b
 def fun(x,k,b):
     return k*x+b
 
-#%%
+#%% 统计分析
 import pandas as pd
+# ----所有
 df = pd.DataFrame(np.zeros(shape=(5,5)))
 df.iloc[:, 0] = str(len(y_test)), 'ME', 'MAE', 'RMSE', 'CC'
 df.iloc[0,1:] = 'QPE_FC', 'Z=238R^1.57', 'Z=300R^1.4', 'Z=200R^1.6' 
@@ -110,8 +113,28 @@ df.iloc[1:, 3] = evaluation(y_test, zr_300)
 df.iloc[1:, 4] = evaluation(y_test, zr_200)
 df.to_csv(path+'all.csv')
 
-def plot(t, p, label=None, stat=None,num=None):
-    # set rcparams
+
+limi = [0, 0.1, 10, 25, 50, np.max(y_test)+100]
+for i in range(5):
+    loc = np.where((y_test>=limi[i]) & (y_test<limi[i+1]))[0]
+    # print(len(loc))
+    
+    df1 = pd.DataFrame(np.zeros(shape=(5,5)))
+    df1.iloc[:, 0] = str(len(loc)), 'ME', 'MAE', 'RMSE', 'CC'
+    df1.iloc[0,1:] = 'QPE_FC', 'Z=238R^1.57', 'Z=300R^1.4', 'Z=200R^1.6' 
+    
+
+    df1.iloc[1:, 1] = evaluation(y_test[loc], y_pred[loc])
+    df1.iloc[1:, 2] = evaluation(y_test[loc], zr_mayu[loc])
+    df1.iloc[1:, 3] = evaluation(y_test[loc], zr_300[loc])
+    df1.iloc[1:, 4] = evaluation(y_test[loc], zr_200[loc])
+    df1.to_csv(path+str(limi[i])+'-'+str(limi[i+1])+'.csv')
+#%% 作图分析
+
+# maxi = np.max([np.max(y_test), np.max(y_pred), np.max(zr_mayu), np.max(zr_300), np.max(zr_200)])
+maxi = 200
+def plot(t, p, label=None, stat=None,num=None): 
+    # ----set rcparams
     plt.rcParams['figure.figsize']=(10,8)
     plt.rcParams['figure.dpi']=400
     plt.rcParams['font.size']=20
@@ -124,16 +147,18 @@ def plot(t, p, label=None, stat=None,num=None):
     z = gaussian_kde(xy)(xy)
     idx = z.argsort()
     x, y, z = x[idx], y[idx], z[idx]
-    z1 = z*len(z)
+    z1 = z*len(z) # 占比*总数 = 个数
     
-    # draw
+    # ----draw
     fig = plt.figure()
     ax = fig.add_subplot(111)
     scatter = ax.scatter(x, y, label=label, c=z1, cmap='Spectral_r')
     
-    ax.plot([0,100],[0,100],c='black')
+    ax.plot([0,maxi],[0,maxi],c='black')
     ax.set_xlabel('Observation (mm/h)')
     ax.set_ylabel('Estimation (mm/h)')
+    # ax.set_xlabel('Z (dBZ)')
+    # ax.set_ylabel('R (mm/h)')
     ax.set_ylim(0,100)
     ax.set_xlim(0,100)
     plt.legend(loc='upper right')
@@ -148,6 +173,7 @@ def plot(t, p, label=None, stat=None,num=None):
         ax.text(1,75,'CORR='+str(stat[3])[:5])
     fig.colorbar(scatter)
     plt.show()
+
 stat=[df.iloc[0,0],df.iloc[2,1],df.iloc[3,1],df.iloc[4,1]]
 plot(y_test, y_pred, label='$QPE_{FC}$',num='(a)',stat=stat)
 stat=[df.iloc[0,0],df.iloc[2,2],df.iloc[3,2],df.iloc[4,2]]
@@ -158,48 +184,51 @@ stat=[df.iloc[0,0],df.iloc[2,4],df.iloc[3,4],df.iloc[4,4]]
 plot(y_test, zr_200, label='$Z=200R^{1.6}$',num='(d)',stat=stat)
 
 
-
-limi = [0, 0.1, 10, 25, 50, np.max(y_test)+100]
-for i in range(5):
-    loc = np.where((y_test>=limi[i]) & (y_test<limi[i+1]))[0]
-    # print(len(loc))
+def plot2(z, r, label=None, stat=None,num=None):
+    # ----set rcparams
+    plt.rcParams['figure.figsize']=(10,8)
+    plt.rcParams['figure.dpi']=400
+    plt.rcParams['font.size']=20
+    plt.rcParams['font.serif']='Times New Roman'
     
-    df = pd.DataFrame(np.zeros(shape=(5,5)))
-    df.iloc[:, 0] = str(len(loc)), 'ME', 'MAE', 'RMSE', 'CC'
-    df.iloc[0,1:] = 'QPE_FC', 'Z=238R^1.57', 'Z=300R^1.4', 'Z=200R^1.6' 
     
+    x = z.flatten()
+    y = r.flatten()
+    xy = np.vstack([x,y])
+    z = gaussian_kde(xy)(xy)
+    idx = z.argsort()
+    x, y, z = x[idx], y[idx], z[idx]
+    z1 = z*len(z) # 占比*总数 = 个数
+    
+    # ----draw
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    scatter = ax.scatter(x, y, label=label, c=z1, cmap='Spectral_r')
 
-    df.iloc[1:, 1] = evaluation(y_test[loc], y_pred[loc])
-    df.iloc[1:, 2] = evaluation(y_test[loc], zr_mayu[loc])
-    df.iloc[1:, 3] = evaluation(y_test[loc], zr_300[loc])
-    df.iloc[1:, 4] = evaluation(y_test[loc], zr_200[loc])
-    df.to_csv(path+str(limi[i])+'-'+str(limi[i+1])+'.csv')
+    ax.set_xlabel('Z (dBZ)')
+    ax.set_ylabel('R (mm/h)')
+    ax.set_ylim(0,200)
+    ax.set_xlim(0,80)
+    plt.legend(loc='upper right')
+    plt.grid()
+    
+    ax.text(1,185,num)
 
+    # if stat:
+    #     ax.text(1,90,'points='+str(stat[0]))
+    #     ax.text(1,85,'MAE='+str(stat[1])[:5])
+    #     ax.text(1,80,'RMSE='+str(stat[2])[:5])
+    #     ax.text(1,75,'CORR='+str(stat[3])[:5])
+    fig.colorbar(scatter)
+    plt.show()
 
-# plt.scatter(z, y_test, label='$obs$')
-# plt.scatter(z, y_pred, label='$QPE_{FC}$')
-# plt.xlim(0,100)
-# plt.ylim(0,100)
-# plt.legend()
-# plt.show()
+plot2(x_test[:,1], y_test, label='obs',num='(a)')
+plot2(x_test[:,1], y_pred, label='$QPE_{FC}$',num='(b)')
+plot2(x_test[:,1], zr_mayu, label='$Z=238R^{1.57}$',num='(c)')
+plot2(x_test[:,1], zr_300, label='$Z=300R^{1.4}$',num='(d)')
+plot2(x_test[:,1], zr_200, label='$Z=200R^{1.6}$',num='(e)')
 
-# plt.scatter(z, y_test, label='$obs$')
-# plt.scatter(z, zr_mayu, label='$Z=238R^{1.57}$')
-# plt.xlim(0,100)
-# plt.ylim(0,100)
-# plt.legend()
-# plt.show()
-
-# plt.scatter(z, y_test, label='$obs$')
-# plt.scatter(z, zr_300, label='$Z=300R^{1.4}$')
-# plt.xlim(0,100)
-# plt.ylim(0,100)
-# plt.legend()
-# plt.show()
-
-# plt.scatter(z, y_test, label='$obs$')
-# plt.scatter(z, zr_200, label='$Z=200R^{1.6}$')
-# plt.xlim(0,100)
-# plt.ylim(0,100)
-# plt.legend()
-# plt.show()
+plt.boxplot([(y_pred - y_test),(zr_mayu - y_test),(zr_300 - y_test),(zr_200 - y_test)], 
+            showfliers=True, showmeans = True, meanline = True)
+plt.grid()
+plt.show()

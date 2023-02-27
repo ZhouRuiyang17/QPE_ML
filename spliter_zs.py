@@ -3,9 +3,21 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-df = pd.read_excel('data_zs_221030_utc8.xlsx')
 
-data = df.iloc[:,1:].values.astype(np.float64)
+
+
+# df = pd.read_excel('data_zs_221030_utc8.xlsx')
+# data = df.iloc[:,1:].values.astype(np.float64)
+
+# np.save('data_zs_221030_utc8.npy', data)
+# loc = np.where((data[:,1] > 201907280000) & (data[:,1] < 201908010000))
+# d = data[loc]
+# np.save('data_zs_190728_190731.npy', d)
+# data = data[:314720] # 2023.2.16 缩短TVT集，留一场用于实践
+# np.save('data_zs_221030_utc8_clip.npy', data)
+
+
+data = np.load('data_zs_221030_utc8_clip.npy')
 
 #%% 筛选
 pred = 0.0576*(10**(data[:,3]/10))**0.557
@@ -13,13 +25,13 @@ true = data[:,-1]
 loc = np.where((abs(pred-true)/pred)<2)
 data = data[loc]
 
-#%% 预处理：区分下雨和不下雨
+#%% 减少不下雨的数量并划分降雨等级
 loc=np.where((data[:,-1]>0))
 data_rain=data[loc]
 loc=np.where(data[:,-1]==0)
 data_norain=data[loc]
 
-# ----减少不下雨的数量'
+# ----减少不下雨的数量
 ls=np.arange(len(data_norain))
 loc=np.random.choice(ls,int(len(data_rain)/10))# 从ls中随机取 int(len(data_rain)/10) 个
 data_norain2=data_norain[loc]
@@ -81,45 +93,46 @@ y_test=y_test[ls]
 
 #%% 画图
 
-# plt.hist(y_train,bins=np.arange(0,200,10))
-# plt.yscale('log')
-# plt.title('train')
-# plt.show()
+# ----降雨的直方图
+plt.hist(y_train,bins=np.arange(0,200,10))
+plt.yscale('log')
+plt.title('train')
+plt.show()
 
-# plt.hist(y_vali,bins=np.arange(0,200,10))
-# plt.yscale('log')
-# plt.title('vali')
-# plt.show()
+plt.hist(y_vali,bins=np.arange(0,200,10))
+plt.yscale('log')
+plt.title('vali')
+plt.show()
 
-# plt.hist(y_test,bins=np.arange(0,200,10))
-# plt.yscale('log')
-# plt.title('test')
-# plt.show()
+plt.hist(y_test,bins=np.arange(0,200,10))
+plt.yscale('log')
+plt.title('test')
+plt.show()
 
+# ----Z-R散点图
+plt.scatter(x_train[:,2], y_train)
+# plt.ylim(0,100)
+# plt.xlim(-30,70)
+plt.xlabel('Z (dBZ)')
+plt.ylabel('R (mm)')
+plt.title('train')
+plt.show()
 
-# plt.scatter(x_train[:,1], y_train)
-# # plt.ylim(0,100)
-# # plt.xlim(-30,70)
-# plt.xlabel('Z (dBZ)')
-# plt.ylabel('R (mm)')
-# plt.title('train')
-# plt.show()
+plt.scatter(x_vali[:,2], y_vali)
+# plt.ylim(0,100)
+# plt.xlim(-30,70)
+plt.xlabel('Z (dBZ)')
+plt.ylabel('R (mm)')
+plt.title('vali')
+plt.show()
 
-# plt.scatter(x_vali[:,1], y_vali)
-# # plt.ylim(0,100)
-# # plt.xlim(-30,70)
-# plt.xlabel('Z (dBZ)')
-# plt.ylabel('R (mm)')
-# plt.title('vali')
-# plt.show()
-
-# plt.scatter(x_test[:,1], y_test)
-# # plt.ylim(0,100)
-# # plt.xlim(-30,70)
-# plt.xlabel('Z (dBZ)')
-# plt.ylabel('R (mm)')
-# plt.title('test')
-# plt.show()
+plt.scatter(x_test[:,2], y_test)
+# plt.ylim(0,100)
+# plt.xlim(-30,70)
+plt.xlabel('Z (dBZ)')
+plt.ylabel('R (mm)')
+plt.title('test')
+plt.show()
 #%% 保存数据
 import os
 dire = 'result'
