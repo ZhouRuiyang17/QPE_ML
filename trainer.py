@@ -9,17 +9,17 @@ from scipy.stats import kstest
 from scipy import stats
 # *****************************************************[1] 准备数据*****************************************************
 # ----读取数据集
-path = 'result/'
+import datetime;path = 'history/'+str(datetime.datetime.now())[:10]+'_zs_resample/'
 x_train = np.load(path+'x_train.npy')
 x_vali = np.load(path+'x_vali.npy')
 x_test = np.load(path+'x_test.npy')
 
-# x_train = x_train[:,[2,3,4,5]]
-# x_vali = x_vali[:,[2,3,4,5]]
-# x_test = x_test[:,[2,3,4,5]]
-x_train = x_train[:,2:-2]
-x_vali = x_vali[:,2:-2]
-x_test = x_test[:,2:-2]
+x_train = x_train[:,[2,3,4,5]]
+x_vali = x_vali[:,[2,3,4,5]]
+x_test = x_test[:,[2,3,4,5]]
+# x_train = x_train[:,2:-2]
+# x_vali = x_vali[:,2:-2]
+# x_test = x_test[:,2:-2]
 
 y_train = np.load(path+'y_train.npy').reshape(-1,1)
 y_vali = np.load(path+'y_vali.npy').reshape(-1,1)
@@ -73,7 +73,7 @@ class Net(nn.Module):
         self.fc = nn.Sequential(
             
             # 6: 4*z + lon + lat
-            nn.Linear(20, 128),
+            nn.Linear(4, 128),
             nn.ReLU(),
             nn.Linear(128, 64),
             nn.ReLU(),

@@ -1,0 +1,4 @@
+cz0-86.xlsx：87天观测的组合反射率
+data_cz_utc8_ave6.xlsx：utc8时间表示的 组合反射率--降雨强度 对，含时间
+data_zs_221030_utc8.xlsx：【221030整理的】utc8时间表示的 20层反射率--降雨强度 对，含时间、经纬度
+data_zs_utc8_ave6-fuben.xlsx
