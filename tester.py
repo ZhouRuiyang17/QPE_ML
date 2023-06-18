@@ -13,7 +13,7 @@ from tools import tp_eval, tp_scatter, cm_scatter
 import datetime
 # ----read
 # path = 'history/'+str(datetime.datetime.now())[:10]+'_zs_resample/'
-path = 'history/2023-05-27_zs_resample/'
+path = 'history/2023-06-18_zs_resample/'
 
 x_train = np.load(path+'x_train.npy')
 x_test = np.load(path+'x_test.npy')
