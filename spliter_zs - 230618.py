@@ -11,13 +11,22 @@ import random
 
 # ----for faster reading, save raw data as .npy file
 data = np.load('data_zs_221030_utc8.npy')
+#%%
+
+df = pd.read_excel('e:/dataset/dataset.xlsx',index_col = 0)
+data = df.loc[:,'0':'rr'].values
 
 # ----select the rainy points
-loc = np.where(data[:,-1] > 0)
+loc = np.where(data[:,-1] > 0.1)
 data_rain = data[loc]
-loc = np.where( (data_rain[:,2] > 0) | (data_rain[:,3] > 0) | (data_rain[:,4] > 0) | (data_rain[:,5] > 0) )
+# loc = np.where( (data_rain[:,2] > 0) | (data_rain[:,3] > 0) | (data_rain[:,4] > 0) | (data_rain[:,5] > 0) )
+loc = np.where( (data_rain[:,2] > 0) | (data_rain[:,3] > 0) | (data_rain[:,0] > 0) | (data_rain[:,1] > 0) )
 data_rain = data_rain[loc]
-
+plt.hist(data_rain[:,-1],bins=[0.1,10,25,50,100])
+plt.xlabel('rainrate bins')
+plt.ylabel('total')
+plt.xticks([0.1,10,25,50,100])
+plt.show()
 
 # ----classify the rain rate
 data_rain_1 = data_rain[data_rain[:,-1]<10] # small
@@ -25,8 +34,8 @@ data_rain_2 = data_rain[(data_rain[:,-1]>=10) & (data_rain[:,-1]<25)]# middle
 data_rain_3 = data_rain[(data_rain[:,-1]>=25) & (data_rain[:,-1]<50)]# heavy
 data_rain_4 = data_rain[(data_rain[:,-1]>=50)]# severe
 
-# ----resample the small rain to improve the distribution of rain rate
-data_rain_1 = np.array(random.sample(data_rain_1.tolist(), len(data_rain_2)*2))
+# # ----resample the small rain to improve the distribution of rain rate
+# data_rain_1 = np.array(random.sample(data_rain_1.tolist(), len(data_rain_2)*2))
 
 
 # ----divide dataset for training, validation and test: 6:1:3

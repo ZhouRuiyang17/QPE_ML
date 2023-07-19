@@ -66,17 +66,26 @@ if __name__ == "__main__":
     method = input("method?")
     
     # ----日期
-    ls_d = os.listdir('D:/data/银川/rpg/')
+    # ls_d = os.listdir('D:/data/银川/rpg/')
+    ls_d = os.listdir('H:/SA雷达三维拼图和组合反射率因子拼图数据/Z三维拼图20层800X800格点/')
     for date in ls_d[:]:
-        # if date != '20200830':
-        #     print('skip '+date)
-        #     continue
-    
+        if date != '20180807':
+            # print('skip '+date)
+            continue
+        print(date)
         # ----日期下的文件
-        path = 'D:/data/银川/mosaic/'+date+'/'; ls_f = os.listdir(path)
+        # path = 'D:/data/银川/mosaic/'+date+'/'; ls_f = os.listdir(path)
+        path = 'H:/SA雷达三维拼图和组合反射率因子拼图数据/Z三维拼图20层800X800格点/'+date+'/'; ls_f = os.listdir(path)
         for fname in ls_f[:]:
-            fpath = path + fname
-            grid = np.load(fpath); qpe = np.zeros(shape=(400,400))
+            # fpath = path + fname
+            # grid = np.load(fpath); qpe = np.zeros(shape=(400,400))
+            if fname.endswith('nc'):
+                fpath = path + fname
+                import netCDF4 as nc
+                grid = nc.Dataset(fpath,'r'); grid = np.array(grid.variables['DBZ'])[0,:4,:,:]
+                qpe = np.zeros(shape=(800,800))
+            else:
+                continue
         # grid = np.load('D:/data/银川/mosaic/20200830/Z_RADR_I_Z9951_20200830034000_O_DOR_CA_CAP.npy')
         # plt.contourf(grid[1])
         # plt.colorbar()
@@ -93,10 +102,19 @@ if __name__ == "__main__":
             elif method == 'mlp':
                 qpe_mlp = np.zeros_like(qpe)
                 counter_x = []; counter_y = []; inputs = []
-                for ix in range(400):
-                    for iy in range(400):
+                # for ix in range(400):
+                #     for iy in range(400):
+                for ix in np.arange(270, 530):
+                    for iy in np.arange(310, 650):
                         input1 = grid[:, iy, ix]
-                        if input1[0] > 0 or input1[1] > 0 or input1[2] > 0 or input1[3] > 0:
+                        
+                        num_ref = 0
+                        for i in range(4):
+                            if input1[i] > 0:
+                                num_ref += 1
+                                
+                        # if input1[0] > 0 or input1[1] > 0 or input1[2] > 0 or input1[3] > 0:
+                        if num_ref >= 2:
                             input1 = input1.reshape(1, -1)
                             input2 = min_max(input1, 0, 75)
                             counter_x.append(ix); counter_y.append(iy)
@@ -116,7 +134,8 @@ if __name__ == "__main__":
             
             # qpe[0] = qpe_zr; qpe[1] = qpe_mlp
             # ----存储
-            save_path = path.replace('mosaic', 'rain_rate_'+method)
+            # save_path = path.replace('mosaic', 'rain_rate_'+method)
+            save_path = path + 'rain_rate_'+method + '/'
             if os.path.exists(save_path) == False:
                 os.makedirs(save_path)
             new_fpath = save_path + fname
