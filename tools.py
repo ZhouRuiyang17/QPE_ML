@@ -38,15 +38,15 @@ def tp_scatter(x,y,label=None,
     z = gaussian_kde(xy)(xy)
     idx = z.argsort()
     x, y, z = x[idx], y[idx], z[idx]
-    # z1 = z*len(z)
+    z1 = z*len(z)
     
     # draw
-    fig = plt.figure(figsize=(10,10),dpi=600)
+    fig = plt.figure(figsize=(14,14),dpi=600)
     ax = fig.add_subplot(111)
     scatter = ax.scatter(x, y, label=label, c=z, cmap='Spectral_r')
     if label != None:
         plt.legend(loc='upper right')
-    # fig.colorbar(scatter)
+    fig.colorbar(scatter)
 
     
     ax.set_xlabel(xylabel+(' (obs)'))

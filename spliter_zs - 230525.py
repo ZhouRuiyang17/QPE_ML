@@ -34,11 +34,14 @@ def spliter(x,y,test_size):
     return  x_train, x_test, y_train, y_test
 
 
-
+# import mytools
+# x1_train, x1_vali, x1_test, y1_train, y1_vali, y1_test = mytools.spliter(data_rain_1[:,:-1],data_rain_1[:,-1],[6,1,3])
+# x2_train, x2_vali, x2_test, y2_train, y2_vali, y2_test = mytools.spliter(data_rain_2[:,:-1],data_rain_2[:,-1],[6,1,3])
+# x3_train, x3_vali, x3_test, y3_train, y3_vali, y3_test = mytools.spliter(data_rain_3[:,:-1],data_rain_3[:,-1],[6,1,3])
+# x4_train, x4_vali, x4_test, y4_train, y4_vali, y4_test = mytools.spliter(data_rain_4[:,:-1],data_rain_4[:,-1],[6,1,3])
 
 x,x1_test,y,y1_test=spliter(data_rain_1[:,:-1],data_rain_1[:,-1],0.3)
 x1_train,x1_vali,y1_train,y1_vali=spliter(x,y,1/7)
-
 
 x,x2_test,y,y2_test=spliter(data_rain_2[:,:-1],data_rain_2[:,-1],0.3)
 x2_train,x2_vali,y2_train,y2_vali=spliter(x,y,1/7)

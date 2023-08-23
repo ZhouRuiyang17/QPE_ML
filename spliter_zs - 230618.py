@@ -13,20 +13,13 @@ import random
 data = np.load('data_zs_221030_utc8.npy')
 #%%
 
-df = pd.read_excel('e:/dataset/dataset.xlsx',index_col = 0)
-data = df.loc[:,'0':'rr'].values
 
 # ----select the rainy points
 loc = np.where(data[:,-1] > 0.1)
 data_rain = data[loc]
-# loc = np.where( (data_rain[:,2] > 0) | (data_rain[:,3] > 0) | (data_rain[:,4] > 0) | (data_rain[:,5] > 0) )
-loc = np.where( (data_rain[:,2] > 0) | (data_rain[:,3] > 0) | (data_rain[:,0] > 0) | (data_rain[:,1] > 0) )
+loc = np.where( (data_rain[:,2] > 0) | (data_rain[:,3] > 0) | (data_rain[:,4] > 0) | (data_rain[:,5] > 0) )
 data_rain = data_rain[loc]
-plt.hist(data_rain[:,-1],bins=[0.1,10,25,50,100])
-plt.xlabel('rainrate bins')
-plt.ylabel('total')
-plt.xticks([0.1,10,25,50,100])
-plt.show()
+
 
 # ----classify the rain rate
 data_rain_1 = data_rain[data_rain[:,-1]<10] # small
@@ -34,8 +27,8 @@ data_rain_2 = data_rain[(data_rain[:,-1]>=10) & (data_rain[:,-1]<25)]# middle
 data_rain_3 = data_rain[(data_rain[:,-1]>=25) & (data_rain[:,-1]<50)]# heavy
 data_rain_4 = data_rain[(data_rain[:,-1]>=50)]# severe
 
-# # ----resample the small rain to improve the distribution of rain rate
-# data_rain_1 = np.array(random.sample(data_rain_1.tolist(), len(data_rain_2)*2))
+# ----resample the small rain to improve the distribution of rain rate
+data_rain_1 = np.array(random.sample(data_rain_1.tolist(), len(data_rain_2)*2))
 
 
 # ----divide dataset for training, validation and test: 6:1:3
@@ -44,22 +37,22 @@ def spliter(x,y,test_size):
     return  x_train, x_test, y_train, y_test
 
 
+import mytools
+
+x,x1_test,y,y1_test=mytools.spliter(data_rain_1[:,:-1],data_rain_1[:,-1],0.3)
+x1_train,x1_vali,y1_train,y1_vali=mytools.spliter(x,y,1/7)
 
 
-x,x1_test,y,y1_test=spliter(data_rain_1[:,:-1],data_rain_1[:,-1],0.3)
-x1_train,x1_vali,y1_train,y1_vali=spliter(x,y,1/7)
+x,x2_test,y,y2_test=mytools.spliter(data_rain_2[:,:-1],data_rain_2[:,-1],0.3)
+x2_train,x2_vali,y2_train,y2_vali=mytools.spliter(x,y,1/7)
 
 
-x,x2_test,y,y2_test=spliter(data_rain_2[:,:-1],data_rain_2[:,-1],0.3)
-x2_train,x2_vali,y2_train,y2_vali=spliter(x,y,1/7)
+x,x3_test,y,y3_test=mytools.spliter(data_rain_3[:,:-1],data_rain_3[:,-1],0.3)
+x3_train,x3_vali,y3_train,y3_vali=mytools.spliter(x,y,1/7)
 
 
-x,x3_test,y,y3_test=spliter(data_rain_3[:,:-1],data_rain_3[:,-1],0.3)
-x3_train,x3_vali,y3_train,y3_vali=spliter(x,y,1/7)
-
-
-x,x4_test,y,y4_test=spliter(data_rain_4[:,:-1],data_rain_4[:,-1],0.3)
-x4_train,x4_vali,y4_train,y4_vali=spliter(x,y,1/7)
+x,x4_test,y,y4_test=mytools.spliter(data_rain_4[:,:-1],data_rain_4[:,-1],0.3)
+x4_train,x4_vali,y4_train,y4_vali=mytools.spliter(x,y,1/7)
 
 
 
